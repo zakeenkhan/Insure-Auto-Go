@@ -1,0 +1,215 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id              Int           @id @default(autoincrement())
+  clientId        Int
+  carId           Int
+  driverId        Int?
+  status          BookingStatus @default(Pending)
+  isInsured       Boolean?      @default(false)
+  insurance       String?
+  bookingDate     DateTime
+  startDate       DateTime
+  endDate         DateTime
+  totalPrice      Int
+  isPaid          Boolean?      @default(false)
+  amountPaid      Int?
+  cancelledAt     DateTime?
+  cancelledById   Int?
+  clientContactNo String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  cancelledBy User?    @relation(fields: [cancelledById], references: [id], name: "UserCancelledBookings")
+  client      User     @relation(fields: [clientId], references: [id], name: "UserBookings")
+  car         Car      @relation(fields: [carId], references: [id], name: "CarBookings")
+  driver      Driver?  @relation(fields: [driverId], references: [id], name: "DriverBookings")
+  ratings     Rating[] @relation("BookingRatings")
+}
+
+model DriverBooking {
+  id              Int           @id @default(autoincrement())
+  clientId        Int
+  driverId        Int?
+  status          BookingStatus @default(Pending)
+  isInsured       Boolean?      @default(false)
+  insurance       String?
+  bookingDate     DateTime
+  startDate       DateTime
+  endDate         DateTime
+  totalPrice      Int
+  isPaid          Boolean?      @default(false)
+  amountPaid      Int?
+  cancelledAt     DateTime?
+  cancelledById   Int?
+  clientContactNo String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  cancelledBy User? @relation(fields: [cancelledById], references: [id], name: "UserCancelledDriverBookings")
+  client      User  @relation(fields: [clientId], references: [id], name: "UserDriverBookings")
+
+  driver Driver? @relation(fields: [driverId], references: [id], name: "DriverDriverBookings")
+  // ratings     Rating[] @relation("BookingRatings")
+}
+
+model Car {
+  id                Int              @id @default(autoincrement())
+  name              String
+  ownerId           Int
+  carPicture        String?
+  carPublished      DateTime         @default(now())
+  city              String?
+  registrationNo    String?          @unique
+  type              String?
+  makeYear          String?
+  capacity          Int?
+  Make              String?
+  fuelType          FuelType?
+  insured           Boolean?         @default(false)
+  rentPerDay        Int?
+  insuranceRequired Boolean?         @default(false)
+  carTransmission   CarTransmission?
+  averageRating     Decimal?         @default(0)
+  ratingCount       Int?             @default(0)
+  weightage         Decimal?         @default(0)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  bookings          Booking[]        @relation("CarBookings")
+  owner             User             @relation(fields: [ownerId], references: [id], name: "UserCars")
+  ratings           Rating[]         @relation("CarRatings")
+}
+
+model Driver {
+  id             Int             @id @default(autoincrement())
+  userId         Int
+  licenseNo      String          @unique
+  licenseExpiry  DateTime
+  licensePicture String?
+  lisenceType    String?
+  driverPicture  String?
+  averageRating  Decimal?        @default(0)
+  ratingCount    Int?            @default(0)
+  weightage      Decimal?        @default(0)
+  per12HoursRate Int?            @default(500)
+  city            String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  bookings       Booking[]       @relation("DriverBookings")
+  driverBookings DriverBooking[] @relation("DriverDriverBookings")
+
+  ratings Rating[] @relation("DriverRatings")
+  user    User     @relation(fields: [userId], references: [id], name: "UserDrivers")
+}
+
+model User {
+  id                      Int             @id @default(autoincrement())
+  fullName                String?
+  email                   String          @unique
+  password                String
+  isVerified              Boolean         @default(false)
+  role                    String          @default("appUser")
+  profilePicture          String?
+  cnic                    String?
+  phone                   String?
+  dob                     DateTime?
+  otp                     Int?
+  averageRatingGiven      Decimal?        @default(0)
+  ratingCount             Int?            @default(0)
+  weightage               Decimal?        @default(0)
+  cnicPhoto  String?
+  isSignUpVerified  Boolean         @default(false)
+  cars                    Car[]           @relation("UserCars")
+  bookings                Booking[]       @relation("UserBookings")
+  driverBookings          DriverBooking[] @relation("UserDriverBookings")
+  ratingsGiven            Rating[]        @relation("UserRatings")
+  driver                  Driver[]        @relation("UserDrivers")
+  cancelledBookings       Booking[]       @relation("UserCancelledBookings")
+  cancelledDriverBookings DriverBooking[] @relation("UserCancelledDriverBookings")
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+  sentMessages  Message[]        @relation("SenderMessages")
+  receivedMessages Message[]     @relation("ReceiverMessages")
+  userConversations Conversation[]   @relation("UserConversations")
+  driverConversations Conversation[]   @relation("DriverConversations")
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  ratedById Int
+  driverId  Int?
+  bookingId Int
+  carId     Int
+  rating    Decimal
+  review    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ratedBy User    @relation(fields: [ratedById], references: [id], name: "UserRatings")
+  driver  Driver?  @relation(fields: [driverId], references: [id], name: "DriverRatings")
+  booking Booking @relation(fields: [bookingId], references: [id], name: "BookingRatings")
+  car     Car     @relation(fields: [carId], references: [id], name: "CarRatings")
+}
+
+
+
+model Conversation {
+  userId   Int
+  driverId Int
+  user     User     @relation("UserConversations", fields: [userId], references: [id], onDelete: Cascade)
+  driver   User   @relation("DriverConversations", fields: [driverId], references: [id], onDelete: Cascade)
+  messages Message[]  @relation("conversationMessages")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@id([userId, driverId]) // Composite primary key
+}
+
+model Message {
+  id             Int           @id @default(autoincrement())
+  senderId       Int
+  receiverId     Int
+  userId    Int
+  driverId  Int
+  conversation Conversation @relation("conversationMessages",fields: [userId, driverId], references: [userId, driverId])
+  isSeen         Boolean       @default(false)
+  content        String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sender         User         @relation("SenderMessages", fields: [senderId], references: [id])
+  receiver       User         @relation("ReceiverMessages", fields: [receiverId], references: [id])
+
+}
+enum FuelType {
+  Petrol
+  Diesel
+  Electric
+  Hybrid
+}
+
+enum CarTransmission {
+  Manual
+  Automatic
+}
+
+enum BookingStatus {
+  Pending
+  Confirmed
+  Reject
+  Cancelled
+  Completed
+}

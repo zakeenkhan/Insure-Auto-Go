@@ -1,0 +1,273 @@
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { GetUserDto } from './dto/get-user.dto';
+import { Prisma } from '@prisma/client';
+export declare class UserService {
+    private readonly prisma;
+    constructor(prisma: PrismaService);
+    findAll(query: GetUserDto): Promise<{
+        data: {
+            id: number;
+            fullName: string | null;
+            email: string;
+            password: string;
+            isVerified: boolean;
+            role: string;
+            profilePicture: string | null;
+            cnic: string | null;
+            phone: string | null;
+            dob: Date | null;
+            otp: number | null;
+            averageRatingGiven: Prisma.Decimal | null;
+            ratingCount: number | null;
+            weightage: Prisma.Decimal | null;
+            cnicPhoto: string | null;
+            isSignUpVerified: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+        }[];
+        meta: {
+            totalPages: number;
+            totalRecords: number;
+            currentPage: number;
+        };
+    }>;
+    findOne(id: number): Promise<{
+        driver: ({
+            bookings: ({
+                car: {
+                    id: number;
+                    name: string;
+                    ownerId: number;
+                    carPicture: string | null;
+                    carPublished: Date;
+                    city: string | null;
+                    registrationNo: string | null;
+                    type: string | null;
+                    makeYear: string | null;
+                    capacity: number | null;
+                    Make: string | null;
+                    fuelType: import(".prisma/client").$Enums.FuelType | null;
+                    insured: boolean | null;
+                    rentPerDay: number | null;
+                    insuranceRequired: boolean | null;
+                    carTransmission: import(".prisma/client").$Enums.CarTransmission | null;
+                    averageRating: Prisma.Decimal | null;
+                    ratingCount: number | null;
+                    weightage: Prisma.Decimal | null;
+                    createdAt: Date;
+                    updatedAt: Date;
+                };
+                driver: {
+                    id: number;
+                    userId: number;
+                    licenseNo: string;
+                    licenseExpiry: Date;
+                    licensePicture: string | null;
+                    lisenceType: string | null;
+                    driverPicture: string | null;
+                    averageRating: Prisma.Decimal | null;
+                    ratingCount: number | null;
+                    weightage: Prisma.Decimal | null;
+                    per12HoursRate: number | null;
+                    city: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
+                };
+                cancelledBy: {
+                    email: string;
+                    cnic: string;
+                    fullName: string;
+                    profilePicture: string;
+                    id: number;
+                    isVerified: boolean;
+                    role: string;
+                };
+                ratings: ({
+                    ratedBy: {
+                        email: string;
+                        cnic: string;
+                        fullName: string;
+                        profilePicture: string;
+                        id: number;
+                        isVerified: boolean;
+                        role: string;
+                    };
+                } & {
+                    id: number;
+                    ratedById: number;
+                    driverId: number | null;
+                    bookingId: number;
+                    carId: number;
+                    rating: Prisma.Decimal;
+                    review: string | null;
+                    createdAt: Date;
+                    updatedAt: Date;
+                })[];
+            } & {
+                id: number;
+                clientId: number;
+                carId: number;
+                driverId: number | null;
+                status: import(".prisma/client").$Enums.BookingStatus;
+                isInsured: boolean | null;
+                insurance: string | null;
+                bookingDate: Date;
+                startDate: Date;
+                endDate: Date;
+                totalPrice: number;
+                isPaid: boolean | null;
+                amountPaid: number | null;
+                cancelledAt: Date | null;
+                cancelledById: number | null;
+                clientContactNo: string | null;
+                createdAt: Date;
+                updatedAt: Date;
+            })[];
+        } & {
+            id: number;
+            userId: number;
+            licenseNo: string;
+            licenseExpiry: Date;
+            licensePicture: string | null;
+            lisenceType: string | null;
+            driverPicture: string | null;
+            averageRating: Prisma.Decimal | null;
+            ratingCount: number | null;
+            weightage: Prisma.Decimal | null;
+            per12HoursRate: number | null;
+            city: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+        })[];
+        email: string;
+        cnic: string;
+        fullName: string;
+        profilePicture: string;
+        id: number;
+        isVerified: boolean;
+        role: string;
+        averageRatingGiven: Prisma.Decimal;
+        ratingCount: number;
+        bookings: ({
+            car: {
+                id: number;
+                name: string;
+                ownerId: number;
+                carPicture: string | null;
+                carPublished: Date;
+                city: string | null;
+                registrationNo: string | null;
+                type: string | null;
+                makeYear: string | null;
+                capacity: number | null;
+                Make: string | null;
+                fuelType: import(".prisma/client").$Enums.FuelType | null;
+                insured: boolean | null;
+                rentPerDay: number | null;
+                insuranceRequired: boolean | null;
+                carTransmission: import(".prisma/client").$Enums.CarTransmission | null;
+                averageRating: Prisma.Decimal | null;
+                ratingCount: number | null;
+                weightage: Prisma.Decimal | null;
+                createdAt: Date;
+                updatedAt: Date;
+            };
+            driver: {
+                id: number;
+                userId: number;
+                licenseNo: string;
+                licenseExpiry: Date;
+                licensePicture: string | null;
+                lisenceType: string | null;
+                driverPicture: string | null;
+                averageRating: Prisma.Decimal | null;
+                ratingCount: number | null;
+                weightage: Prisma.Decimal | null;
+                per12HoursRate: number | null;
+                city: string | null;
+                createdAt: Date;
+                updatedAt: Date;
+            };
+            cancelledBy: {
+                email: string;
+                cnic: string;
+                fullName: string;
+                profilePicture: string;
+                id: number;
+                isVerified: boolean;
+                role: string;
+            };
+            client: {
+                email: string;
+                cnic: string;
+                fullName: string;
+                profilePicture: string;
+                id: number;
+                isVerified: boolean;
+                role: string;
+            };
+            ratings: ({
+                ratedBy: {
+                    email: string;
+                    cnic: string;
+                    fullName: string;
+                    profilePicture: string;
+                    id: number;
+                    isVerified: boolean;
+                    role: string;
+                };
+            } & {
+                id: number;
+                ratedById: number;
+                driverId: number | null;
+                bookingId: number;
+                carId: number;
+                rating: Prisma.Decimal;
+                review: string | null;
+                createdAt: Date;
+                updatedAt: Date;
+            })[];
+        } & {
+            id: number;
+            clientId: number;
+            carId: number;
+            driverId: number | null;
+            status: import(".prisma/client").$Enums.BookingStatus;
+            isInsured: boolean | null;
+            insurance: string | null;
+            bookingDate: Date;
+            startDate: Date;
+            endDate: Date;
+            totalPrice: number;
+            isPaid: boolean | null;
+            amountPaid: number | null;
+            cancelledAt: Date | null;
+            cancelledById: number | null;
+            clientContactNo: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+        })[];
+    }>;
+    update(id: number, updateUserDto: UpdateUserDto): Promise<{
+        id: number;
+        fullName: string | null;
+        email: string;
+        password: string;
+        isVerified: boolean;
+        role: string;
+        profilePicture: string | null;
+        cnic: string | null;
+        phone: string | null;
+        dob: Date | null;
+        otp: number | null;
+        averageRatingGiven: Prisma.Decimal | null;
+        ratingCount: number | null;
+        weightage: Prisma.Decimal | null;
+        cnicPhoto: string | null;
+        isSignUpVerified: boolean;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
+    remove(id: number): string;
+}
