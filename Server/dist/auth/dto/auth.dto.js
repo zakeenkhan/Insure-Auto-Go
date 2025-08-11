@@ -57,8 +57,8 @@ __decorate([
 ], AuthDto.prototype, "dob", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, swagger_1.ApiPropertyOptional)(),
     __metadata("design:type", String)
 ], AuthDto.prototype, "cnicPhoto", void 0);
 //# sourceMappingURL=auth.dto.js.map

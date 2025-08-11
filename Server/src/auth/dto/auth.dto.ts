@@ -34,7 +34,7 @@ export class AuthDto extends loginDto {
   dob: Date;
 
   @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
+  @IsOptional()
+  @ApiPropertyOptional()
   cnicPhoto: string;
 }
