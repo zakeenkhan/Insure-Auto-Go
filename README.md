@@ -1,4 +1,46 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Insure-Auto-Go
+
+This is a full-stack application for an auto insurance service.
+
+## Project Overview
+
+(Please add a more detailed description of your project here. You can describe the purpose of the application, its features, and the problems it solves.)
+
+## Technologies Used
+
+Based on the file structure, this project appears to use the following technologies:
+
+*   **Frontend:** Next.js, React, Tailwind CSS
+*   **Backend:** Node.js, Express.js (or a similar framework)
+*   **Database:** Prisma (likely with PostgreSQL, based on common configurations)
+
+(Please update this section with the correct technologies if this is inaccurate.)
+
+## Project Images
+
+Here are some images from the project:
+
+### Client-side Images
+
+![Logo](Client/src/components/header/LOGO.png)
+![Hero Background](Client/src/components/heroSection/hero-bg.png)
+![Car](Client/src/components/heroSection/car.png)
+![What People Say](Client/src/components/whatPeopleSay/whatPeopleSay-bg.jpeg)
+![Review](Client/src/components/whatPeopleSay/review.jpeg)
+
+### Server-side Images
+
+![Upload 1](Server/uploads/1718990276660-639715122.png)
+![Upload 2](Server/uploads/1718989288103-87804351.png)
+
+## Tools Used for this Update
+
+To update this `README.md` file, I used the following tools:
+
+1.  `find_by_name`: To locate the `README.md` file and all the image files within the project.
+2.  `view_file`: To read the contents of the `README.md` and `package.json` files to understand the project structure and technologies.
+3.  `replace_file_content`: To replace the old `README.md` content with this new, more detailed version.
+
 
 ## Getting Started
 
