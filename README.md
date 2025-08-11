@@ -1,45 +1,56 @@
 # Insure-Auto-Go
 
-This is a full-stack application for an auto insurance service.
+This is a full-stack application designed to streamline the process of obtaining and managing auto insurance. The platform connects users with insurance providers, allowing them to easily browse, compare, and purchase insurance plans.
 
-## Project Overview
+## Live Demo
 
-(Please add a more detailed description of your project here. You can describe the purpose of the application, its features, and the problems it solves.)
+[Link to your live demo here]
 
-## Technologies Used
+## Screenshot
 
-Based on the file structure, this project appears to use the following technologies:
+(Please add a screenshot of the application's main page here.)
 
-*   **Frontend:** Next.js, React, Tailwind CSS
-*   **Backend:** Node.js, Express.js (or a similar framework)
-*   **Database:** Prisma (likely with PostgreSQL, based on common configurations)
+![Application Screenshot](placeholder.png)
 
-(Please update this section with the correct technologies if this is inaccurate.)
+## How to Run the Project
 
-## Project Images
+To run this project locally, you will need to have Node.js and npm installed. Follow these steps:
 
-Here are some images from the project:
+1.  **Clone the repository:**
+    ```bash
+    git clone <your-repository-url>
+    cd Insure-Auto-Go
+    ```
 
-### Client-side Images
+2.  **Start the Backend Server:**
+    Open a terminal and navigate to the `Server` directory:
+    ```bash
+    cd Server
+    npm install
+    npm run start:dev
+    ```
+    The server will be running on `http://localhost:3000` (or as configured).
 
-![Logo](Client/src/components/header/LOGO.png)
-![Hero Background](Client/src/components/heroSection/hero-bg.png)
-![Car](Client/src/components/heroSection/car.png)
-![What People Say](Client/src/components/whatPeopleSay/whatPeopleSay-bg.jpeg)
-![Review](Client/src/components/whatPeopleSay/review.jpeg)
+3.  **Start the Frontend Client:**
+    Open a second terminal and navigate to the `Client` directory:
+    ```bash
+    cd Client
+    npm install --legacy-peer-deps
+    npm run dev -- -p 3001
+    ```
+    The client will be running on `http://localhost:3001`.
 
-### Server-side Images
-
-![Upload 1](Server/uploads/1718990276660-639715122.png)
-![Upload 2](Server/uploads/1718989288103-87804351.png)
-
-## Tools Used for this Update
+## Tools I Used for This Update
 
 To update this `README.md` file, I used the following tools:
 
 1.  `find_by_name`: To locate the `README.md` file and all the image files within the project.
-2.  `view_file`: To read the contents of the `README.md` and `package.json` files to understand the project structure and technologies.
-3.  `replace_file_content`: To replace the old `README.md` content with this new, more detailed version.
+2.  `list_dir`: To inspect the contents of the `Client` and `Server` directories.
+3.  `view_file`: To attempt to read the contents of the `package.json` files and understand the project's dependencies and scripts.
+4.  `run_command`: To install the dependencies for both the client and server, and to start the application.
+5.  `command_status`: To check the status of the running application.
+6.  `open_browser_url`: To open the application in a browser.
+7.  `replace_file_content`: To update this `README.md` with the new information.
 
 
 ## Getting Started
