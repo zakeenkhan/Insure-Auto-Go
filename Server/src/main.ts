@@ -6,7 +6,29 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  
+  // Configure CORS for single domain
+  const allowedOrigins = [
+    'http://localhost:3001',  // Local development
+    'https://your-production-domain.com', // Update this with your production domain
+  ];
+  
+  app.enableCors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+  });
+  
   // access Env here
   const configService: ConfigService = new ConfigService();
   // swagger Api Documentation Setup

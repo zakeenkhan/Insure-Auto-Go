@@ -4,7 +4,13 @@ This is a full-stack application designed to streamline the process of obtaining
 
 ## Live Demo
 
-Will Available Soon
+[View Live Demo](https://your-production-domain.com)
+
+*Note: The application is configured to run on a single domain with the following structure:*
+- `https://your-production-domain.com/` - Frontend application
+- `https://your-production-domain.com/api` - Backend API
+
+*Replace the domain with your actual production domain after deployment.*
 
 ## Screenshots
 
@@ -25,7 +31,35 @@ Here are some screenshots of the application:
 ![Post Car](ss/postcar.JPG)
 ![Profile Settings](ss/profilesetting.JPG)
 
-## How to Run the Project
+## Deployment Instructions
+
+### Single Domain Deployment
+
+1. **Choose a Hosting Provider**
+   - You can use Vercel, Netlify, or any other platform that supports Next.js
+   - The application is configured to work on a single domain
+
+2. **Environment Variables**
+   - Update the following in your hosting provider's environment variables:
+     ```
+     NEXT_PUBLIC_BASE_URL=https://your-production-domain.com
+     NEXT_PUBLIC_API_URL=/api
+     ```
+
+3. **API Routes**
+   - The application is configured to proxy API requests from `/api/*` to your backend
+   - No separate backend URL needs to be configured in the frontend
+
+4. **Build Settings**
+   - Set the base directory to `Client`
+   - Set the build command to `npm install && npm run build`
+   - Set the output directory to `.next`
+
+5. **Server Configuration**
+   - The server is configured to accept requests from your production domain
+   - Update `allowedOrigins` in `Server/src/main.ts` with your production domain
+
+## How to Run the Project Locally
 
 To run this project locally, you will need to have Node.js and npm installed. Follow these steps:
 
