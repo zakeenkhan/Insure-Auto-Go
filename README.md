@@ -10,13 +10,20 @@ Will Available Soon
 
 Here are some screenshots of the application:
 
-![Screenshot 1](ss/Capture.JPG)
-![Screenshot 2](ss/Capture2.JPG)
-![Screenshot 3](ss/Capture3.JPG)
-![Screenshot 4](ss/Capture4.JPG)
-![Screenshot 5](ss/Capture5.JPG)
-![Screenshot 6](ss/Capture6.JPG)
-![Screenshot 7](ss/Capture7.JPG)
+![Home Page](ss/Capture.JPG)
+![Vehicle Selection](ss/Capture2.JPG)
+![Insurance Plans](ss/Capture3.JPG)
+![Coverage Options](ss/Capture4.JPG)
+![Payment](ss/Capture5.JPG)
+![Confirmation](ss/Capture6.JPG)
+![Dashboard](ss/Capture7.JPG)
+![Account](ss/Account.JPG)
+![Chat](ss/chatting.JPG)
+![Driver Profile](ss/driver%20profile.JPG)
+![Driver License](ss/driverlisence.JPG)
+![Filters](ss/filters.JPG)
+![Post Car](ss/postcar.JPG)
+![Profile Settings](ss/profilesetting.JPG)
 
 ## How to Run the Project
 
