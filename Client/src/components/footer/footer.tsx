@@ -81,7 +81,7 @@ export const Footer = () => {
             </div>
             <div>
               <p className="text-gray-400 text-xs">CALL US 24/7</p>
-              <p className="text-white mt-2">+92 3333388080</p>
+              <p className="text-white mt-2">+92 3439644996</p>
             </div>
           </div>
         </div>

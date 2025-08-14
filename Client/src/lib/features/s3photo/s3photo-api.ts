@@ -4,12 +4,10 @@ import cookie from "react-cookies"
 type S3photoResponse = {
   url: string
 }
-type S3photoPayload = {
-  file: File
-}
+
 const S3photo = Api.injectEndpoints({
   endpoints: (build) => ({
-    s3photUpload: build.mutation<S3photoResponse, S3photoPayload>({
+    s3photUpload: build.mutation<S3photoResponse, FormData>({
       query: (data) => {
         const token = cookie.load("token")
         return {

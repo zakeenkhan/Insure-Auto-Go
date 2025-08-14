@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode"
 import logo from "./LOGO.png"
 import approved from "./approved.png"
 import { Button } from "@/components/ui/button"
-import "./style.css"
+import styles from "./style.module.css"
 import { useEffect, useState } from "react"
 import cookie from "react-cookies"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -39,36 +39,51 @@ export const Header = () => {
   // fullName
   const [fullName, setFullName] = useState("")
   // loading token from cookie
-  const token = cookie.load("token")
-  const { data: user, error, isLoading, refetch } = useGetMeQuery()
+  const [token, setToken] = useState<string | null>(null);
+  const [decodedData, setDecodedData] = useState<JwtPayload | null>(null);
+
+  const { data: user, error, isLoading, refetch } = useGetMeQuery(undefined, {
+    skip: !token, // Skip the query if there's no token
+  });
   // setting width for hamburger
   const [width, setWidth] = useState<string>("0%")
   //   using router for page navigation
   const router = useRouter()
   const logOut = () => {
     cookie.remove("token", { path: "/" })
+    setToken(null); // Clear token state on logout
     router.push("/signin")
   }
   const [update, setUpdate] = useState<boolean>(false)
-  // decoding token
-  const decodedData = token ? jwtDecode<JwtPayload>(token) : null
+
+  // move popup and modal state above useEffect to avoid TDZ
+  const [open, setOpen] = useState<boolean>(false)
+  const [isCreateDriverOpen, setIsCreateDriverOpen] = useState<boolean>(false)
+  const [successPopup, setSuccessPopup] = useState<boolean>(false)
+  const [driverSuccessPopup, setDriverSuccessPopup] = useState<boolean>(false)
+  const [selectedCar, setSelectedCar] = useState(null)
+  
   useEffect(() => {
-    if (!isLoading) {
+    // Load token and decode only on the client side
+    const clientToken = cookie.load("token");
+    setToken(clientToken);
+    const decoded = clientToken ? jwtDecode<JwtPayload>(clientToken) : null;
+    setDecodedData(decoded);
+
+    if (!isLoading && user) {
       setUserDetails(user as User)
     }
-    decodedData && setFullName(decodedData?.fullName)
+    // Only set full name if decoded is available and has fullName
+    if (decoded?.fullName) {
+      setFullName(decoded.fullName);
+    }
     if (successPopup || driverSuccessPopup) {
       setTimeout(() => {
         setSuccessPopup(false)
         setDriverSuccessPopup(false)
       }, 3000)
     }
-  }, [isLoading, user, decodedData])
-  const [open, setOpen] = useState<boolean>(false)
-  const [isCreateDriverOpen, setIsCreateDriverOpen] = useState<boolean>(false)
-  const [successPopup, setSuccessPopup] = useState<boolean>(false)
-  const [driverSuccessPopup, setDriverSuccessPopup] = useState<boolean>(false)
-  const [selectedCar, setSelectedCar] = useState(null)
+  }, [isLoading, user, successPopup, driverSuccessPopup]) // Removed decodedData
 
   const handleCarSelection = (carInfo: any) => {
     setSelectedCar(carInfo)
@@ -106,7 +121,7 @@ export const Header = () => {
               </ul>
             </nav>
           )}
-          {token ? (
+          {token && !error ? (
             <div className="flex gap-4">
               <Button
                 onClick={() => setOpen(true)}
@@ -117,7 +132,7 @@ export const Header = () => {
                 Post Car
               </Button>
               <DropdownMenu>
-                <DropdownMenuTrigger>
+                <DropdownMenuTrigger asChild>
                   <Button
                     className="flex gap-2 stroke-white hover:stroke-[#E18B20]"
                     variant={"orangeSecondary"}
@@ -173,8 +188,8 @@ export const Header = () => {
                         <p className="text-sm">Driver</p>
                         <Image
                           className="mr-4"
-                          width={"30"}
-                          height={"20"}
+                          width={30}
+                          height={20}
                           src={approved}
                           alt="driver-approved"
                         />
@@ -186,7 +201,7 @@ export const Header = () => {
                     Profile Settings
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <a href="/booking">Bookings</a>
                   </DropdownMenuItem>
                   <DropdownMenuItem>My Car List</DropdownMenuItem>
@@ -197,7 +212,7 @@ export const Header = () => {
                       Create Driver Profile
                     </DropdownMenuItem>
                   ) : (
-                    <DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                       <a href="/hiring">Hiring</a>
                     </DropdownMenuItem>
                   )}
@@ -213,6 +228,16 @@ export const Header = () => {
             </div>
           ) : (
             <div className="flex gap-4">
+              {error && (
+                <div className="text-red-500 text-sm">
+                  Error loading user data. Please log in again.
+                </div>
+              )}
+              {!token && (
+                <div className="text-blue-500 text-sm">
+                  Please log in to access your account.
+                </div>
+              )}
               <a href="/signin">
                 <Button
                   className="hover:stroke-black stroke-white flex gap-2 items-center"
@@ -278,61 +303,65 @@ export const Header = () => {
             <div>
               <li className="w-1/2 flex items-center">
                 <a href="">
-                  <Image src={logo} alt="logo" />
+                  <Image width={120} height={40} src={logo} alt="logo" />
                 </a>
               </li>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex gap-4">
-              <Button
-                className="hover:stroke-black stroke-white flex gap-2 items-center"
-                variant={"black"}
-                size={"sm"}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="21"
-                  viewBox="0 0 20 21"
-                  fill="none"
+              <a href="/signin">
+                <Button
+                  className="hover:stroke-black stroke-white flex gap-2 items-center"
+                  variant={"black"}
+                  size={"sm"}
                 >
-                  <path
-                    d="M10 8.83317C11.841 8.83317 13.3334 7.34079 13.3334 5.49984C13.3334 3.65889 11.841 2.1665 10 2.1665C8.15907 2.1665 6.66669 3.65889 6.66669 5.49984C6.66669 7.34079 8.15907 8.83317 10 8.83317Z"
-                    stroke=""
-                    strokeWidth="1.5"
-                  />
-                  <path
-                    d="M16.6646 15.5002C16.6666 15.3633 16.6666 15.2243 16.6666 15.0835C16.6666 13.0124 13.6819 11.3335 9.99998 11.3335C6.31808 11.3335 3.33331 13.0124 3.33331 15.0835C3.33331 17.1546 3.33331 18.8335 9.99998 18.8335C11.8591 18.8335 13.1998 18.7029 14.1666 18.4697"
-                    stroke=""
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                Login
-              </Button>
-              <Button
-                className="flex gap-2 stroke-white hover:stroke-[#E18B20]"
-                variant={"orange"}
-                size={"sm"}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="21"
-                  viewBox="0 0 20 21"
-                  fill="none"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="21"
+                    viewBox="0 0 20 21"
+                    fill="none"
+                  >
+                    <path
+                      d="M10 8.83317C11.841 8.83317 13.3334 7.34079 13.3334 5.49984C13.3334 3.65889 11.841 2.1665 10 2.1665C8.15907 2.1665 6.66669 3.65889 6.66669 5.49984C6.66669 7.34079 8.15907 8.83317 10 8.83317Z"
+                      stroke=""
+                      strokeWidth="1.5"
+                    />
+                    <path
+                      d="M16.6646 15.5002C16.6666 15.3633 16.6666 15.2243 16.6666 15.0835C16.6666 13.0124 13.6819 11.3335 9.99998 11.3335C6.31808 11.3335 3.33331 13.0124 3.33331 15.0835C3.33331 17.1546 3.33331 18.8335 9.99998 18.8335C11.8591 18.8335 13.1998 18.7029 14.1666 18.4697"
+                      stroke=""
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  Login
+                </Button>
+              </a>
+              <a href="/signup">
+                <Button
+                  className="flex gap-2 stroke-white hover:stroke-[#E18B20]"
+                  variant={"orange"}
+                  size={"sm"}
                 >
-                  <path
-                    d="M5.83331 8.85733C6.22616 8.83333 6.71047 8.83333 7.33331 8.83333H12.6666C13.2895 8.83333 13.7738 8.83333 14.1666 8.85733M5.83331 8.85733C5.34305 8.88725 4.99522 8.95458 4.69834 9.10583C4.22793 9.3455 3.84548 9.72792 3.6058 10.1983C3.33331 10.7332 3.33331 11.4332 3.33331 12.8333V14C3.33331 15.4002 3.33331 16.1002 3.6058 16.635C3.84548 17.1054 4.22793 17.4878 4.69834 17.7275C5.23311 18 5.93318 18 7.33331 18H12.6666C14.0668 18 14.7668 18 15.3016 17.7275C15.7721 17.4878 16.1545 17.1054 16.3941 16.635C16.6666 16.1002 16.6666 15.4002 16.6666 14V12.8333C16.6666 11.4332 16.6666 10.7332 16.3941 10.1983C16.1545 9.72792 15.7721 9.3455 15.3016 9.10583C15.0047 8.95458 14.6569 8.88725 14.1666 8.85733M5.83331 8.85733V7.16667C5.83331 4.86548 7.6988 3 9.99998 3C12.3011 3 14.1666 4.86548 14.1666 7.16667V8.85733"
-                    stroke=""
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Register
-              </Button>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="21"
+                    viewBox="0 0 20 21"
+                    fill="none"
+                  >
+                    <path
+                      d="M5.83331 8.85733C6.22616 8.83333 6.71047 8.83333 7.33331 8.83333H12.6666C13.2895 8.83333 13.7738 8.83333 14.1666 8.85733M5.83331 8.85733C5.34305 8.88725 4.99522 8.95458 4.69834 9.10583C4.22793 9.3455 3.84548 9.72792 3.6058 10.1983C3.33331 10.7332 3.33331 11.4332 3.33331 12.8333V14C3.33331 15.4002 3.33331 16.1002 3.6058 16.635C3.84548 17.1054 4.22793 17.4878 4.69834 17.7275C5.23311 18 5.93318 18 7.33331 18H12.6666C14.0668 18 14.7668 18 15.3016 17.7275C15.7721 17.4878 16.1545 17.1054 16.3941 16.635C16.6666 16.1002 16.6666 15.4002 16.6666 14V12.8333C16.6666 11.4332 16.6666 10.7332 16.3941 10.1983C16.1545 9.72792 15.7721 9.3455 15.3016 9.10583C15.0047 8.95458 14.6569 8.88725 14.1666 8.85733M5.83331 8.85733V7.16667C5.83331 4.86548 7.6988 3 9.99998 3C12.3011 3 14.1666 4.86548 14.1666 7.16667V8.85733"
+                      stroke=""
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  Register
+                </Button>
+              </a>
             </div>
             <button
               onClick={() => setWidth("100%")}
@@ -360,14 +389,14 @@ export const Header = () => {
       </div>
       {/* <!-- Mobile menu, show/hide based on menu state. --> */}
       <div className="">
-        <div style={{ width: width }} className="text-center mt-4 overlay">
-          <a
-            href="javascript:void(0)"
+        <div style={{ width: width }} className={styles.overlay}>
+          <button
+            type="button"
             onClick={() => setWidth("0%")}
             className="closebtn text-6xl absolute top-4 right-4 mr-10 font-semibold text-white"
           >
             &times;
-          </a>
+          </button>
           <div className="space-y-1 mt-16 px-2 pt-2 pb-3">
             <a
               href="#"

@@ -92,6 +92,7 @@ const Me = Api.injectEndpoints({
     getMe: build.query<User, void>({
       query: () => {
         const token = cookie.load("token")
+        console.log("Token for /user/me:", token ? "Token exists" : "No token")
         return {
           method: "GET",
           url: `user/me`,

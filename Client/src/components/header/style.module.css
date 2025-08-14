@@ -1,0 +1,12 @@
+.overlay {
+    position: fixed;
+    height: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 0%;
+    z-index: 20;
+    background-color: #E18B20;
+    overflow-x: hidden;
+    transition: 0.5s;
+} 

@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useCarMutation } from "@/lib/features/car/car-api"
 import { useS3photUploadMutation } from "@/lib/features/s3photo/s3photo-api"
+import Image from "next/image"
 
 type CarValues = {
   name: string
@@ -168,9 +169,7 @@ export const CarRental: React.FC<CarRentalProps> = ({
       console.log("No file selected.")
     }
   }
-  useEffect(() => {
-    handleS3PhotoUpload
-  }, [carPhoto])
+
   const handleDocumentUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       setCarDocuments([...carDocuments, ...Array.from(event.target.files)])
@@ -189,9 +188,12 @@ export const CarRental: React.FC<CarRentalProps> = ({
   }
 
   useEffect(() => {
-    document.body.style.overflow = "hidden"
-    return () => {
-      document.body.style.overflow = "auto"
+    // Ensure document.body is only accessed on the client-side
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = "hidden"
+      return () => {
+        document.body.style.overflow = "auto"
+      }
     }
   }, [])
 
@@ -207,10 +209,11 @@ export const CarRental: React.FC<CarRentalProps> = ({
       >
         <div onClick={handleCloseModal} className="mb-5 inline-block">
           <p className="flex items-center text-xs font-normal gap-x-2 cursor-pointer">
-            <img
-              className="w-3 h-3"
+            <Image
               src="https://cdn-icons-png.flaticon.com/512/3686/3686446.png"
               alt="Back"
+              width={12}
+              height={12}
             />
             Back
           </p>
@@ -222,10 +225,13 @@ export const CarRental: React.FC<CarRentalProps> = ({
               <div className="flex gap-2 flex-wrap mt-2">
                 {carPhotos.map((photo, index) => (
                   <div key={index} className="relative">
-                    <img
+                    <Image
                       src={URL.createObjectURL(photo)}
                       alt={`car-photo-${index}`}
+                      width={80}
+                      height={80}
                       className="w-20 h-20 object-cover rounded"
+                      unoptimized
                     />
                     <Button
                       type="button"
@@ -243,10 +249,13 @@ export const CarRental: React.FC<CarRentalProps> = ({
             <div className="mb-4">
               <div className="flex justify-center gap-2 flex-wrap mt-2">
                 <div className="relative">
-                  <img
+                  <Image
                     src={URL.createObjectURL(carPhoto)}
-                    alt={`car-photo`}
+                    alt="car-photo"
+                    width={128}
+                    height={128}
                     className="w-32 h-32 object-cover rounded"
+                    unoptimized
                   />
                   <Button
                     type="button"
@@ -702,13 +711,13 @@ export const CarRental: React.FC<CarRentalProps> = ({
             )}
           </div>
         </div>
-        {error.includes("ACCESS DENIED") ? (
-          <p className="text-red-500 text-xs pt-2">
-            Your profile is not verified
-          </p>
-        ) : (
-          <p className="text-red-500 text-xs pt-2">{error}</p>
-        )}
+        <div>
+          {error.includes("ACCESS DENIED") ? (
+            <p className="text-red-500 text-xs pt-2">Your profile is not verified</p>
+          ) : (
+            <p className="text-red-500 text-xs pt-2">{error}</p>
+          )}
+        </div>
         <div className="mt-5 flex justify-center">
           <Button
             type="submit"

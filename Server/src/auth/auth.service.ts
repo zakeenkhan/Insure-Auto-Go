@@ -29,17 +29,15 @@ export class AuthService {
         data: {
           ...dto,
           password,
-          isVerified: false,
-          otp: otp,
+          isVerified: true,
+          isSignUpVerified: true,
+          otp: null,
         },
       });
 
       delete user.password;
-      await this.sendOtp(dto.fullName, otp);
-      return {
-        user,
-        // accessToken: await this.signToken(user)
-      };
+
+      return { user };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -51,23 +49,28 @@ export class AuthService {
   }
   async signin(dto: loginDto) {
     // find the user by email
-    const user = await this.prisma.user.findUnique({
+    let user = await this.prisma.user.findUnique({
       where: {
         email: dto.email,
       },
     });
     // if user does not exist throw exception
     if (!user) throw new ForbiddenException('credential incorrect');
-    if (user.isSignUpVerified == false)
-      throw new ForbiddenException('user not verified');
+
     // compare passwords
     const pwMatch = await argon.verify(user.password, dto.password);
 
     // if password incorrect throw exception
     if (!pwMatch) throw new ForbiddenException('credential incorrect');
-    // send back the user
-    // return user; step-1 for creating without jwt token
-    // step-2 we are using jwt
+
+    // ensure user is marked verified
+    if (!user.isSignUpVerified || !user.isVerified) {
+      user = await this.prisma.user.update({
+        where: { id: user.id },
+        data: { isSignUpVerified: true, isVerified: true, otp: null },
+      });
+    }
+
     delete user.password;
     return { user, accessToken: await this.signToken(user) };
   }
@@ -91,26 +94,22 @@ export class AuthService {
       throw new BadRequestException('User not found');
     }
 
-    if (user.isVerified) {
-      throw new BadRequestException('User already verified');
-    }
+    const verifyUser = await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        isVerified: true,
+        isSignUpVerified:true,
+        otp:null
+      },
+    });
 
-      const verifyUser = await this.prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          isVerified: true,
-          isSignUpVerified:true,
-          otp:null
-        },
-      });
-
-      delete verifyUser.password;
-      return {
-        user: verifyUser,
-        message: 'account verified ',
-      };
+    delete verifyUser.password;
+    return {
+      user: verifyUser,
+      message: 'account verified ',
+    };
     
   }
 
@@ -125,33 +124,22 @@ export class AuthService {
       throw new BadRequestException('User not found');
     }
 
-    if (user.isVerified) {
-      throw new BadRequestException('User already verified');
-    }
+    const verifyUser = await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        isSignUpVerified: true,
+        otp: null,
+      },
+    });
 
-    if (user.otp != null && user.otp != otp) {
-      throw new BadRequestException('incorrect otp');
-    }
-    if (user.otp == otp) {
-      const verifyUser = await this.prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: {
-          isSignUpVerified: true,
-          otp: null,
-        },
-      });
-
-      delete verifyUser.password;
-      return {
-        user: verifyUser,
-        accessToken: await this.signToken(verifyUser),
-        message: 'account verified ',
-      };
-    } else {
-      throw new BadRequestException('incorrect otp');
-    }
+    delete verifyUser.password;
+    return {
+      user: verifyUser,
+      accessToken: await this.signToken(verifyUser),
+      message: 'account verified ',
+    };
   }
   async updateUser(userId: number, dto: UpdateUserDto) {
     const user = await this.prisma.user.findFirst({
@@ -176,15 +164,7 @@ export class AuthService {
     return updateUser;
   }
   async sendOtp(name: string, otp: number) {
-    const accountSid = process.env.TWILLIO_ACC_ID;
-    const authToken = process.env.TWILLIO_AUTH_ID; // replace with your actual auth token
-    const client = new Twilio(accountSid, authToken);
-    // const client = require('twilio')(accountSid, authToken)
-    await client.messages.create({
-      body: `Hello ${name} welcome to InsureAuto your otp is ${otp}`,
-      from: `${process.env.TWILLIO_SENDER}`,
-      to: `${process.env.TWILLIO_VERIFY_NO}`,
-    });
+    return; // disabled
   }
 
   async resendOtp(email: string) {
@@ -200,14 +180,12 @@ export class AuthService {
     if (user.isSignUpVerified) {
       throw new BadRequestException('User already verified');
     }
-    const otp = Math.floor(1000 + Math.random() * 9000);
     await this.prisma.user.update({
       where:{id: user.id},
       data:{
-        otp: otp
+        otp: null
       }
     })
-    await this.sendOtp(user.fullName, otp);
-    return { message: 'otp resend successfully' };
+    return { message: 'otp resend disabled in this environment' };
   }
 }

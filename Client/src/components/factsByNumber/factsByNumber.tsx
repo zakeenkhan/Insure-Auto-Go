@@ -6,7 +6,7 @@ export const FactsByNumber = () => {
   return (
     <div className="bg-[#15182E] lg:py-16 py-10 relative">
       <div className="absolute left-0 top-6">
-        <Image className="lg:w-48 w-24" src={car} alt="car" />
+        <Image width={192} height={192} className="lg:w-48 w-24" src={car} alt="car" />
       </div>
       <div className="container relative mx-auto text-white">
         <div className="absolute right-10 top-0">

@@ -5,7 +5,7 @@ export const Api = createApi({
   reducerPath: "api/public",
   // Set a default timeout of 10 seconds
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5555/",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5555/",
     timeout: 10000,
     prepareHeaders: (headers) => {
       return headers

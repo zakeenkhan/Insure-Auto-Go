@@ -1,3 +1,4 @@
+"use client"
 import {
   CarTypeCarousel,
   FAQ,
@@ -11,11 +12,13 @@ import {
   WhyChooseUs,
 } from "@/components"
 import { WhatPeopleSay } from "@/components/whatPeopleSay"
+import { ServerStatus } from "@/components"
 
 export default function Home() {
   return (
     <div>
       <Header />
+      <ServerStatus />
       <HeroSection />
       <HowItWork />
       <PopularCars />

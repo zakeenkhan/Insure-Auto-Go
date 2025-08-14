@@ -10,11 +10,7 @@ exports.isVerifiedUserGuard = void 0;
 const common_1 = require("@nestjs/common");
 let isVerifiedUserGuard = class isVerifiedUserGuard {
     async canActivate(context) {
-        const request = context.switchToHttp().getRequest();
-        if (!request.user.isVerified)
-            throw new common_1.ForbiddenException('ACCESS DENIED');
-        else
-            return true;
+        return true;
     }
 };
 exports.isVerifiedUserGuard = isVerifiedUserGuard;

@@ -17,12 +17,29 @@ const common_1 = require("@nestjs/common");
 const platform_express_1 = require("@nestjs/platform-express");
 const AWS = require("@aws-sdk/client-s3");
 const multerS3 = require("multer-s3");
+const multer_1 = require("multer");
+const path_1 = require("path");
 let UploadS3Controller = class UploadS3Controller {
     constructor() { }
     uploadFile(file) {
+        const hasAllAwsEnv = [
+            'AWS_REGION',
+            'AWS_ACCESS_KEY_ID',
+            'AWS_ACCESS_SECRET',
+            'AWS_BUCKET',
+            'AWS_ACL',
+            'AWS_CDN_ROOT_PATH',
+            'AWS_CDN_URL',
+        ].every((key) => !!process.env[key]);
+        if (hasAllAwsEnv) {
+            return {
+                url: `${process.env.AWS_CDN_URL}/${file.key}`,
+                key: file.key,
+            };
+        }
         return {
-            url: `${process.env.AWS_CDN_URL}/${file.key}`,
-            key: file.key,
+            url: `/uploads/${file.filename}`,
+            key: file.filename,
         };
     }
 };
@@ -30,22 +47,44 @@ exports.UploadS3Controller = UploadS3Controller;
 __decorate([
     (0, common_1.Post)('photo'),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: multerS3({
-            s3: new AWS.S3Client({
-                region: process.env.AWS_REGION,
-                credentials: {
-                    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-                    secretAccessKey: process.env.AWS_ACCESS_SECRET,
+        storage: (() => {
+            const hasAllAwsEnv = [
+                'AWS_REGION',
+                'AWS_ACCESS_KEY_ID',
+                'AWS_ACCESS_SECRET',
+                'AWS_BUCKET',
+                'AWS_ACL',
+                'AWS_CDN_ROOT_PATH',
+                'AWS_CDN_URL',
+            ].every((key) => !!process.env[key]);
+            if (!hasAllAwsEnv) {
+                return (0, multer_1.diskStorage)({
+                    destination: './uploads',
+                    filename: (req, file, callback) => {
+                        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                        const ext = (0, path_1.extname)(file.originalname);
+                        const filename = `${uniqueSuffix}${ext}`;
+                        callback(null, filename);
+                    },
+                });
+            }
+            return multerS3({
+                s3: new AWS.S3Client({
+                    region: process.env.AWS_REGION,
+                    credentials: {
+                        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                        secretAccessKey: process.env.AWS_ACCESS_SECRET,
+                    },
+                }),
+                bucket: process.env.AWS_BUCKET,
+                acl: process.env.AWS_ACL,
+                contentType: multerS3.AUTO_CONTENT_TYPE,
+                key: (req, file, cb) => {
+                    const fileName = `${process.env.AWS_CDN_ROOT_PATH}/${Date.now().toString()}-${file.originalname}`;
+                    cb(null, fileName);
                 },
-            }),
-            bucket: process.env.AWS_BUCKET,
-            acl: process.env.AWS_ACL,
-            contentType: multerS3.AUTO_CONTENT_TYPE,
-            key: (req, file, cb) => {
-                const fileName = `${process.env.AWS_CDN_ROOT_PATH}/${Date.now().toString()}-${file.originalname}`;
-                cb(null, fileName);
-            },
-        }),
+            });
+        })(),
     })),
     __param(0, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),

@@ -135,16 +135,20 @@ export const RentCars = ({ params }: Props) => {
             <div>
               {car?.carPicture ? (
                 <Image
-                  width="500"
-                  height="500"
+                  width={500}
+                  height={500}
                   className="w-full h-[34rem] rounded-t-xl"
                   src={car?.carPicture}
                   alt="cars"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = carImg.src;
+                  }}
                 />
               ) : (
                 <Image
-                  width="500"
-                  height="500"
+                  width={500}
+                  height={500}
                   className="w-full h-[34rem] rounded-t-xl"
                   src={carImg}
                   alt="cars"

@@ -52,6 +52,17 @@ export declare class BookingService {
             driver: number;
             ratings: number;
         };
+        ratings: {
+            id: number;
+            ratedById: number;
+            driverId: number | null;
+            bookingId: number;
+            carId: number;
+            rating: Prisma.Decimal;
+            review: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+        }[];
         cancelledBy: {
             id: number;
             fullName: string | null;
@@ -92,17 +103,6 @@ export declare class BookingService {
             createdAt: Date;
             updatedAt: Date;
         };
-        ratings: {
-            id: number;
-            ratedById: number;
-            driverId: number | null;
-            bookingId: number;
-            carId: number;
-            rating: Prisma.Decimal;
-            review: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-        }[];
     } & {
         id: number;
         clientId: number;
@@ -171,6 +171,17 @@ export declare class BookingService {
                 driver: number;
                 ratings: number;
             };
+            ratings: {
+                id: number;
+                ratedById: number;
+                driverId: number | null;
+                bookingId: number;
+                carId: number;
+                rating: Prisma.Decimal;
+                review: string | null;
+                createdAt: Date;
+                updatedAt: Date;
+            }[];
             cancelledBy: {
                 id: number;
                 fullName: string | null;
@@ -211,17 +222,6 @@ export declare class BookingService {
                 createdAt: Date;
                 updatedAt: Date;
             };
-            ratings: {
-                id: number;
-                ratedById: number;
-                driverId: number | null;
-                bookingId: number;
-                carId: number;
-                rating: Prisma.Decimal;
-                review: string | null;
-                createdAt: Date;
-                updatedAt: Date;
-            }[];
         } & {
             id: number;
             clientId: number;
@@ -295,6 +295,17 @@ export declare class BookingService {
             driver: number;
             ratings: number;
         };
+        ratings: {
+            id: number;
+            ratedById: number;
+            driverId: number | null;
+            bookingId: number;
+            carId: number;
+            rating: Prisma.Decimal;
+            review: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+        }[];
         cancelledBy: {
             id: number;
             fullName: string | null;
@@ -335,17 +346,6 @@ export declare class BookingService {
             createdAt: Date;
             updatedAt: Date;
         };
-        ratings: {
-            id: number;
-            ratedById: number;
-            driverId: number | null;
-            bookingId: number;
-            carId: number;
-            rating: Prisma.Decimal;
-            review: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-        }[];
     } & {
         id: number;
         clientId: number;
@@ -413,6 +413,17 @@ export declare class BookingService {
             driver: number;
             ratings: number;
         };
+        ratings: {
+            id: number;
+            ratedById: number;
+            driverId: number | null;
+            bookingId: number;
+            carId: number;
+            rating: Prisma.Decimal;
+            review: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+        }[];
         cancelledBy: {
             id: number;
             fullName: string | null;
@@ -453,17 +464,6 @@ export declare class BookingService {
             createdAt: Date;
             updatedAt: Date;
         };
-        ratings: {
-            id: number;
-            ratedById: number;
-            driverId: number | null;
-            bookingId: number;
-            carId: number;
-            rating: Prisma.Decimal;
-            review: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-        }[];
     } & {
         id: number;
         clientId: number;
@@ -531,6 +531,17 @@ export declare class BookingService {
             driver: number;
             ratings: number;
         };
+        ratings: {
+            id: number;
+            ratedById: number;
+            driverId: number | null;
+            bookingId: number;
+            carId: number;
+            rating: Prisma.Decimal;
+            review: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+        }[];
         cancelledBy: {
             id: number;
             fullName: string | null;
@@ -571,17 +582,6 @@ export declare class BookingService {
             createdAt: Date;
             updatedAt: Date;
         };
-        ratings: {
-            id: number;
-            ratedById: number;
-            driverId: number | null;
-            bookingId: number;
-            carId: number;
-            rating: Prisma.Decimal;
-            review: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-        }[];
     } & {
         id: number;
         clientId: number;
@@ -649,6 +649,17 @@ export declare class BookingService {
             driver: number;
             ratings: number;
         };
+        ratings: {
+            id: number;
+            ratedById: number;
+            driverId: number | null;
+            bookingId: number;
+            carId: number;
+            rating: Prisma.Decimal;
+            review: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+        }[];
         cancelledBy: {
             id: number;
             fullName: string | null;
@@ -689,17 +700,6 @@ export declare class BookingService {
             createdAt: Date;
             updatedAt: Date;
         };
-        ratings: {
-            id: number;
-            ratedById: number;
-            driverId: number | null;
-            bookingId: number;
-            carId: number;
-            rating: Prisma.Decimal;
-            review: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-        }[];
     } & {
         id: number;
         clientId: number;

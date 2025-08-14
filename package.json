@@ -4,5 +4,13 @@
   },
   "dependencies": {
     "@prisma/client": "^6.13.0"
+  },
+  "scripts": {
+    "dev:client": "npm --prefix Client run dev",
+    "build:client": "npm --prefix Client run build",
+    "start:client": "npm --prefix Client run start",
+    "dev:server": "npm --prefix Server run start:dev",
+    "build:server": "npm --prefix Server run build",
+    "start:server": "npm --prefix Server run start"
   }
 }

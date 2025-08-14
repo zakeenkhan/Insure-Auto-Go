@@ -1,10 +1,10 @@
 import Image from "next/image"
 import { SectionStarter } from "../sectionStarter"
-import "./style.css"
+import styles from "./style.module.css"
 import review from "./review.jpeg"
 export const WhatPeopleSay = () => {
   return (
-    <div className="main-bg">
+    <div className={styles["main-bg"]}>
       <div className="container mx-auto">
         <div className="text-white">
           <SectionStarter

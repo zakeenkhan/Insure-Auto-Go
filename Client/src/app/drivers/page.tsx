@@ -37,7 +37,6 @@ export default function Drivers() {
             {drivers?.map((driver: Driver, index: number) => (
               <div key={index} className="lg:w-1/3 md:w-1/2 sm:w-full p-3">
                 <DriverCard
-                  id={driver?.id}
                   name={driver?.user?.fullName || ""}
                   picture={driver.driverPicture}
                 />

@@ -1,15 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Request,
-  UseGuards,
-  ParseIntPipe,
-  Query,
+	Controller,
+	Get,
+	Post,
+	Body,
+	Patch,
+	Param,
+	Delete,
+	Request,
+	UseGuards,
+	ParseIntPipe,
+	Query,
 } from '@nestjs/common';
 import { DriverService } from './driver.service';
 import { CreateDriverDto } from './dto/create-driver.dto';
@@ -21,41 +21,50 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { ApiTags } from '@nestjs/swagger';
 import { GetDriverDto } from './dto/get-driver.dto';
 
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard, isVerifiedUserGuard, RoleGuard(['admin', 'appUser']))
 @ApiTags('Driver')
 @Controller('driver')
 export class DriverController {
-  constructor(private readonly driverService: DriverService) {}
+	constructor(private readonly driverService: DriverService) {}
 
-  @Post()
-  create(@Request() req, @Body() createDriverDto: CreateDriverDto) {
-    const userId = req.user.id;
-    return this.driverService.create({ ...createDriverDto, userId });
-  }
+	// Create driver (protected)
+	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard, isVerifiedUserGuard, RoleGuard(['admin', 'appUser']))
+	@Post()
+	create(@Request() req, @Body() createDriverDto: CreateDriverDto) {
+		const userId = req.user.id;
+		return this.driverService.create({ ...createDriverDto, userId });
+	}
 
-  @Get()
-  findAll(@Query() getDriverDto: GetDriverDto) {
-    return this.driverService.findAll(getDriverDto);
-  }
+	// Public list
+	@Get()
+	findAll(@Query() getDriverDto: GetDriverDto) {
+		return this.driverService.findAll(getDriverDto);
+	}
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.driverService.findOne(id);
-  }
+	// Public detail
+	@Get(':id')
+	findOne(@Param('id', ParseIntPipe) id: number) {
+		return this.driverService.findOne(id);
+	}
 
-  @Patch(':id')
-  update(
-    @Request() req,
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateDriverDto: UpdateDriverDto,
-  ) {
-    const userId = req.user.id;
-    return this.driverService.update(userId, id, updateDriverDto, req.user);
-  }
+	// Update driver (protected)
+	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard, isVerifiedUserGuard, RoleGuard(['admin', 'appUser']))
+	@Patch(':id')
+	update(
+		@Request() req,
+		@Param('id', ParseIntPipe) id: number,
+		@Body() updateDriverDto: UpdateDriverDto,
+	) {
+		const userId = req.user.id;
+		return this.driverService.update(userId, id, updateDriverDto, req.user);
+	}
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.driverService.remove(+id);
-  }
+	// Delete driver (protected)
+	@ApiBearerAuth()
+	@UseGuards(JwtAuthGuard, isVerifiedUserGuard, RoleGuard(['admin', 'appUser']))
+	@Delete(':id')
+	remove(@Param('id') id: string) {
+		return this.driverService.remove(+id);
+	}
 }

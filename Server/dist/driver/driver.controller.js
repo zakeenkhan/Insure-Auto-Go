@@ -47,6 +47,8 @@ let DriverController = class DriverController {
 };
 exports.DriverController = DriverController;
 __decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(auth_guard_1.JwtAuthGuard, isVerifyUser_guard_1.isVerifiedUserGuard, (0, role_guard_1.RoleGuard)(['admin', 'appUser'])),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
@@ -69,6 +71,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], DriverController.prototype, "findOne", null);
 __decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(auth_guard_1.JwtAuthGuard, isVerifyUser_guard_1.isVerifiedUserGuard, (0, role_guard_1.RoleGuard)(['admin', 'appUser'])),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
@@ -78,6 +82,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], DriverController.prototype, "update", null);
 __decorate([
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)(auth_guard_1.JwtAuthGuard, isVerifyUser_guard_1.isVerifiedUserGuard, (0, role_guard_1.RoleGuard)(['admin', 'appUser'])),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -85,8 +91,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], DriverController.prototype, "remove", null);
 exports.DriverController = DriverController = __decorate([
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)(auth_guard_1.JwtAuthGuard, isVerifyUser_guard_1.isVerifiedUserGuard, (0, role_guard_1.RoleGuard)(['admin', 'appUser'])),
     (0, swagger_2.ApiTags)('Driver'),
     (0, common_1.Controller)('driver'),
     __metadata("design:paramtypes", [driver_service_1.DriverService])

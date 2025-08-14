@@ -74,15 +74,6 @@ export declare class UserService {
                     createdAt: Date;
                     updatedAt: Date;
                 };
-                cancelledBy: {
-                    email: string;
-                    cnic: string;
-                    fullName: string;
-                    profilePicture: string;
-                    id: number;
-                    isVerified: boolean;
-                    role: string;
-                };
                 ratings: ({
                     ratedBy: {
                         email: string;
@@ -104,6 +95,15 @@ export declare class UserService {
                     createdAt: Date;
                     updatedAt: Date;
                 })[];
+                cancelledBy: {
+                    email: string;
+                    cnic: string;
+                    fullName: string;
+                    profilePicture: string;
+                    id: number;
+                    isVerified: boolean;
+                    role: string;
+                };
             } & {
                 id: number;
                 clientId: number;
@@ -189,24 +189,6 @@ export declare class UserService {
                 createdAt: Date;
                 updatedAt: Date;
             };
-            cancelledBy: {
-                email: string;
-                cnic: string;
-                fullName: string;
-                profilePicture: string;
-                id: number;
-                isVerified: boolean;
-                role: string;
-            };
-            client: {
-                email: string;
-                cnic: string;
-                fullName: string;
-                profilePicture: string;
-                id: number;
-                isVerified: boolean;
-                role: string;
-            };
             ratings: ({
                 ratedBy: {
                     email: string;
@@ -228,6 +210,24 @@ export declare class UserService {
                 createdAt: Date;
                 updatedAt: Date;
             })[];
+            cancelledBy: {
+                email: string;
+                cnic: string;
+                fullName: string;
+                profilePicture: string;
+                id: number;
+                isVerified: boolean;
+                role: string;
+            };
+            client: {
+                email: string;
+                cnic: string;
+                fullName: string;
+                profilePicture: string;
+                id: number;
+                isVerified: boolean;
+                role: string;
+            };
         } & {
             id: number;
             clientId: number;

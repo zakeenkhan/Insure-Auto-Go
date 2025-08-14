@@ -16,7 +16,6 @@ const argon = require("argon2");
 const library_1 = require("@prisma/client/runtime/library");
 const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
-const twilio_1 = require("twilio");
 let AuthService = class AuthService {
     constructor(prisma, jwt, config) {
         this.prisma = prisma;
@@ -32,15 +31,13 @@ let AuthService = class AuthService {
                 data: {
                     ...dto,
                     password,
-                    isVerified: false,
-                    otp: otp,
+                    isVerified: true,
+                    isSignUpVerified: true,
+                    otp: null,
                 },
             });
             delete user.password;
-            await this.sendOtp(dto.fullName, otp);
-            return {
-                user,
-            };
+            return { user };
         }
         catch (error) {
             if (error instanceof library_1.PrismaClientKnownRequestError) {
@@ -52,18 +49,22 @@ let AuthService = class AuthService {
         }
     }
     async signin(dto) {
-        const user = await this.prisma.user.findUnique({
+        let user = await this.prisma.user.findUnique({
             where: {
                 email: dto.email,
             },
         });
         if (!user)
             throw new common_1.ForbiddenException('credential incorrect');
-        if (user.isSignUpVerified == false)
-            throw new common_1.ForbiddenException('user not verified');
         const pwMatch = await argon.verify(user.password, dto.password);
         if (!pwMatch)
             throw new common_1.ForbiddenException('credential incorrect');
+        if (!user.isSignUpVerified || !user.isVerified) {
+            user = await this.prisma.user.update({
+                where: { id: user.id },
+                data: { isSignUpVerified: true, isVerified: true, otp: null },
+            });
+        }
         delete user.password;
         return { user, accessToken: await this.signToken(user) };
     }
@@ -83,9 +84,6 @@ let AuthService = class AuthService {
         });
         if (!user) {
             throw new common_1.BadRequestException('User not found');
-        }
-        if (user.isVerified) {
-            throw new common_1.BadRequestException('User already verified');
         }
         const verifyUser = await this.prisma.user.update({
             where: {
@@ -112,32 +110,21 @@ let AuthService = class AuthService {
         if (!user) {
             throw new common_1.BadRequestException('User not found');
         }
-        if (user.isVerified) {
-            throw new common_1.BadRequestException('User already verified');
-        }
-        if (user.otp != null && user.otp != otp) {
-            throw new common_1.BadRequestException('incorrect otp');
-        }
-        if (user.otp == otp) {
-            const verifyUser = await this.prisma.user.update({
-                where: {
-                    id: user.id,
-                },
-                data: {
-                    isSignUpVerified: true,
-                    otp: null,
-                },
-            });
-            delete verifyUser.password;
-            return {
-                user: verifyUser,
-                accessToken: await this.signToken(verifyUser),
-                message: 'account verified ',
-            };
-        }
-        else {
-            throw new common_1.BadRequestException('incorrect otp');
-        }
+        const verifyUser = await this.prisma.user.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                isSignUpVerified: true,
+                otp: null,
+            },
+        });
+        delete verifyUser.password;
+        return {
+            user: verifyUser,
+            accessToken: await this.signToken(verifyUser),
+            message: 'account verified ',
+        };
     }
     async updateUser(userId, dto) {
         const user = await this.prisma.user.findFirst({
@@ -160,14 +147,7 @@ let AuthService = class AuthService {
         return updateUser;
     }
     async sendOtp(name, otp) {
-        const accountSid = process.env.TWILLIO_ACC_ID;
-        const authToken = process.env.TWILLIO_AUTH_ID;
-        const client = new twilio_1.Twilio(accountSid, authToken);
-        await client.messages.create({
-            body: `Hello ${name} welcome to InsureAuto your otp is ${otp}`,
-            from: `${process.env.TWILLIO_SENDER}`,
-            to: `${process.env.TWILLIO_VERIFY_NO}`,
-        });
+        return;
     }
     async resendOtp(email) {
         const user = await this.prisma.user.findFirst({
@@ -181,15 +161,13 @@ let AuthService = class AuthService {
         if (user.isSignUpVerified) {
             throw new common_1.BadRequestException('User already verified');
         }
-        const otp = Math.floor(1000 + Math.random() * 9000);
         await this.prisma.user.update({
             where: { id: user.id },
             data: {
-                otp: otp
+                otp: null
             }
         });
-        await this.sendOtp(user.fullName, otp);
-        return { message: 'otp resend successfully' };
+        return { message: 'otp resend disabled in this environment' };
     }
 };
 exports.AuthService = AuthService;

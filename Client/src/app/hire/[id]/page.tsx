@@ -131,8 +131,8 @@ const handleSendMessage = () => {
             <div>
               {driver?.driverPicture && (
                 <Image
-                  width="500"
-                  height="500"
+                  width={500}
+                  height={500}
                   className="w-full h-[20rem] rounded-t-xl"
                   src={driver?.driverPicture}
                   alt="cars"

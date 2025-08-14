@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 import { Driver } from "@/types"
 
 export const PopularDrivers = () => {
-  const { data, isLoading } = useGetDriversQuery({
+  const { data, isLoading, error } = useGetDriversQuery({
     page: 1,
     pageSize: 10,
   })
@@ -24,7 +24,17 @@ export const PopularDrivers = () => {
           description="Here's a list of some of the most popular Drivers globally, based on their preferences"
         />
         <div className="flex flex-wrap ">
-          {drivers.length > 0 && (
+          {isLoading && (
+            <div className="w-full text-center py-8">
+              <p className="text-gray-600">Loading drivers...</p>
+            </div>
+          )}
+          {error && (
+            <div className="w-full text-center py-8">
+              <p className="text-red-600">Unable to load drivers. Please try again later.</p>
+            </div>
+          )}
+          {!isLoading && !error && drivers.length > 0 && (
             <>
               {drivers.map((driver: Driver, index: number) => (
                 <div key={index} className="lg:w-1/3 md:w-1/2 sm:w-full p-3">
@@ -35,6 +45,11 @@ export const PopularDrivers = () => {
                 </div>
               ))}
             </>
+          )}
+          {!isLoading && !error && drivers.length === 0 && (
+            <div className="w-full text-center py-8">
+              <p className="text-gray-600">No drivers available at the moment.</p>
+            </div>
           )}
         </div>
       </div>

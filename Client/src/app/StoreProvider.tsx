@@ -10,8 +10,14 @@ export default function StoreProvider({
 }) {
   const storeRef = useRef<AppStore>()
   if (!storeRef.current) {
-    // Create the store instance the first time this renders
-    storeRef.current = makeStore()
+    try {
+      // Create the store instance the first time this renders
+      storeRef.current = makeStore()
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to create Redux store:", err)
+      throw err
+    }
   }
 
   return <Provider store={storeRef.current}>{children}</Provider>
