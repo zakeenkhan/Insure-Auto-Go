@@ -2,14 +2,57 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/main.ts",
-      "use": "@vercel/node"
+      "src": "api/index.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "dist/**",
+          "node_modules/.prisma/**",
+          "node_modules/@prisma/client/**"
+        ]
+      }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/main.ts"
+      "dest": "/api"
+    }
+  ],
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    },
+    "use": "@vercel/node"
+  },
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "buildCommand": "node vercel-build.js",
+  "installCommand": "npm install --legacy-peer-deps",
+  "outputDirectory": "dist",
+  "framework": null,
+  "regions": ["iad1"],
+  "public": false,
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
     }
   ]
 }
