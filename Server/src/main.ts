@@ -133,8 +133,32 @@ export async function bootstrap() {
     const prismaService = app.get(PrismaService);
     await prismaService.enableShutdownHooks(app);
 
+    // Health check endpoint
+    app.get('/', async (req, res) => {
+      try {
+        // Check database connection
+        await prismaService.$queryRaw`SELECT 1`;
+        
+        res.status(200).json({
+          status: 'ok',
+          database: 'connected',
+          timestamp: new Date().toISOString(),
+          environment: nodeEnv,
+          version: '1.0.0',
+        });
+      } catch (error) {
+        logger.error('Health check failed:', error);
+        res.status(500).json({
+          status: 'error',
+          database: 'disconnected',
+          error: error.message,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    });
+
     // Global error handler for unhandled routes
-    app.use((req, res, next) => {
+    app.use((req, res) => {
       res.status(404).json({
         statusCode: 404,
         message: `Cannot ${req.method} ${req.path}`,
