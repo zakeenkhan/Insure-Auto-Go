@@ -157,6 +157,12 @@ export async function bootstrap() {
       } catch (error) {
         logger.error('❌ Failed to connect to database:', error.message);
       }
+    } else {
+      // For Vercel, we need to start the server but don't await it
+      await app.init();
+      const server = app.getHttpServer();
+      server.listen(0); // Use 0 to let the OS assign an available port
+      logger.log('🚀 Serverless function ready');
     }
     
     // Return the app instance for Vercel serverless function
