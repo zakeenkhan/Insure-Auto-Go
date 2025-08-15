@@ -1,8 +1,9 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
+import { ClassSerializerInterceptor, Logger, ValidationPipe, HttpStatus, HttpException } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe, Logger, HttpStatus, HttpException } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 
 export async function bootstrap() {
@@ -22,39 +23,13 @@ export async function bootstrap() {
     const port = configService.get<number>('PORT', 5555);
     const isVercel = configService.get<string>('VERCEL') === '1';
     
-    // Configure CORS for development and production
-    const allowedOrigins = [
-      'http://localhost:3001',  // Local development
-      'http://localhost:3000',  // Common frontend port
-      'https://insure-auto-go.vercel.app', // Production frontend
-      'https://*.vercel.app',   // Vercel preview deployments
-      'https://insure-auto-go.vercel.app', // Production domain
-    ];
-    
-    // Enable CORS with proper error handling
+    // Enable CORS with more permissive settings for Vercel
     app.enableCors({
-      origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin && nodeEnv === 'development') {
-          logger.warn('Request with no origin - allowing in development');
-          return callback(null, true);
-        }
-        
-        // In production, only allow requests from known origins
-        if (nodeEnv === 'production' && origin && !allowedOrigins.some(o => 
-          origin === o || 
-          origin.endsWith(o.replace('https://', ''))
-        )) {
-          logger.warn(`CORS blocked: ${origin}`);
-          return callback(new Error('Not allowed by CORS'), false);
-        }
-        
-        return callback(null, true);
-      },
+      origin: '*',
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-      credentials: true,
       allowedHeaders: 'Content-Type, Accept, Authorization, X-Requested-With',
       exposedHeaders: 'Authorization',
+      credentials: true,
       maxAge: 600, // 10 minutes
     });
     
@@ -133,38 +108,30 @@ export async function bootstrap() {
     const prismaService = app.get(PrismaService);
     await prismaService.enableShutdownHooks(app);
 
-    // Health check endpoint
-    app.get('/', async (req, res) => {
-      try {
-        // Check database connection
-        await prismaService.$queryRaw`SELECT 1`;
-        
-        res.status(200).json({
-          status: 'ok',
-          database: 'connected',
-          timestamp: new Date().toISOString(),
-          environment: nodeEnv,
-          version: '1.0.0',
-        });
-      } catch (error) {
-        logger.error('Health check failed:', error);
-        res.status(500).json({
-          status: 'error',
-          database: 'disconnected',
-          error: error.message,
-          timestamp: new Date().toISOString(),
-        });
-      }
-    });
+    // Global interceptors
+    app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+    
+    // Enable request logging in development
+    if (nodeEnv !== 'production') {
+      app.use((req: Request, res: Response, next: Function) => {
+        logger.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+        next();
+      });
+    }
+    
+    // Health check endpoint will be handled by a dedicated controller
+    // The controller is registered in AppModule
 
     // Global error handler for unhandled routes
-    app.use((req, res) => {
+    app.use((req: Request, res: Response) => {
       res.status(404).json({
+        status: 'error',
         statusCode: 404,
         message: `Cannot ${req.method} ${req.path}`,
         error: 'Not Found',
+        path: req.path,
         timestamp: new Date().toISOString(),
-        path: req.url,
+        url: req.url,
       });
     });
 
@@ -182,11 +149,10 @@ export async function bootstrap() {
         logger.error('❌ Failed to connect to database:', error.message);
       }
     } else {
-      // For Vercel, we need to start the server but don't await it
+      // For Vercel, initialize the app but don't start the server
       await app.init();
-      const server = app.getHttpServer();
-      server.listen(0); // Use 0 to let the OS assign an available port
       logger.log('🚀 Serverless function ready');
+      // The server will be started by the Vercel serverless function
     }
     
     // Return the app instance for Vercel serverless function

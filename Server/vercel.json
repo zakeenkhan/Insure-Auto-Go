@@ -8,8 +8,12 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/api/(.*)",
       "dest": "/api"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/$1"
     }
   ],
   "build": {
@@ -23,11 +27,8 @@
   "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
   "outputDirectory": "dist",
-  "framework": null,
   "regions": ["iad1"],
-  "public": false,
   "cleanUrls": true,
-  "trailingSlash": false,
   "headers": [
     {
       "source": "/(.*)",
