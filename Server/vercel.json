@@ -2,33 +2,25 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/index.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "dist/**",
-          "node_modules/.prisma/**",
-          "node_modules/@prisma/client/**"
-        ]
-      }
+      "src": "dist/main.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/api"
+      "dest": "/dist/main.js"
     }
   ],
   "build": {
     "env": {
       "NODE_ENV": "production"
-    },
-    "use": "@vercel/node"
+    }
   },
   "env": {
     "NODE_ENV": "production"
   },
-  "buildCommand": "node vercel-build.js",
+  "buildCommand": "npm run build",
   "installCommand": "npm install --legacy-peer-deps",
   "outputDirectory": "dist",
   "framework": null,
