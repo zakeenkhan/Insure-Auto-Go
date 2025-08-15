@@ -18,6 +18,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { UserModule } from './user/user.module';
 import { DriverBookingModule } from './driverBooking/driverBooking.module';
 import { ConversationModule } from './conversation/conversation.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -37,7 +38,8 @@ import { ConversationModule } from './conversation/conversation.module';
     RatingModule,
     UserModule,
     DriverBookingModule,
-    ConversationModule
+    ConversationModule,
+    HealthModule
   ],
   controllers: [AppController],
   providers: [
