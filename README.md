@@ -1,16 +1,7 @@
 # Insure-Auto-Go
+This project is a full-stack web application developed as my Undergraduate Final Year Project. It is designed to simplify and streamline the process of obtaining and managing auto insurance.
 
-This is a full-stack application designed to streamline the process of obtaining and managing auto insurance. The platform connects users with insurance providers, allowing them to easily browse, compare, and purchase insurance plans.
-
-## Live Demo
-
-[View Live Demo](https://your-production-domain.com)
-
-*Note: The application is configured to run on a single domain with the following structure:*
-- `https://your-production-domain.com/` - Frontend application
-- `https://your-production-domain.com/api` - Backend API
-
-*Replace the domain with your actual production domain after deployment.*
+The platform connects users with insurance providers, allowing them to browse, compare, and purchase insurance plans in a convenient and transparent way. It not only enhances the user experience by reducing manual effort but also provides insurance providers with an efficient system to manage policies, customers, and claims.
 
 ## Screenshots
 
